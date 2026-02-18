@@ -7,9 +7,9 @@
 
 Создана виртуальная машина в VMware Workstation Pro 17
 
-![Параметры VM](screenshots\settings.png)
+![Параметры VM](lab\lab1\screenshots\settings.png)
 
-![Консоль Ubuntu](screenshots\vm-console.png)
+![Консоль Ubuntu](lab\lab1\screenshots\vm-console.png)
 
 ## №2 Информация о системе ##
 
@@ -19,7 +19,7 @@
 - Память: 3,8 GB
 - Диски: ???
 
-![Информация о системе](screenshots\system-info.png)
+![Информация о системе](lab\lab1\screenshots\system-info.png)
 
 ## №3 Сеть:IP-адрес и открытые порты ##
 
@@ -27,9 +27,9 @@
 - SSH прослушивается на 22 порту
 - Да 53 порт
 
-![ip адрес ПК](screenshots\ip-addr.png)
+![ip адрес ПК](lab\lab1\screenshots\ip-addr.png)
 
-![Открытые порта](screenshots\ports.png)
+![Открытые порта](lab\lab1\screenshots\ports.png)
 
 ## №4 Сервис SSH ##
 
@@ -38,9 +38,9 @@
 - Порт == 22
 - Автозапуск выключен 
 
-![Статус SSH](screenshots\ssh-status.png)
+![Статус SSH](lab\lab1\screenshots\ssh-status.png)
 
-![Порты SSH](screenshots\ssh-ports.png)
+![Порты SSH](lab\lab1\screenshots\ssh-ports.png)
 
 ## №5 Пользователи и группы ##
 
@@ -48,11 +48,11 @@
 - пользователь boardy состоит в следующих группах: "boardy, sudo, users" 
 - Существуют различные системные пользователи и нужны они для работы с различными службами. Так daemon нужен для запуска фоновых служб и демонов. 
 
-![Пользователи системы](screenshots\users.png)
+![Пользователи системы](lab\lab1\screenshots\users.png)
 
-![Создание нового пользователя](screenshots\new-user.png)
+![Создание нового пользователя](lab\lab1\screenshots\new-user.png)
 
-![проверка создания user](screenshots\user-chek.png)
+![проверка создания user](lab\lab1\screenshots\user-chek.png)
 
 ## №6 Дерево каталогов ##
 
@@ -64,9 +64,9 @@
 - Скрытые каталоги: bash_history, bash_logout, bashrc, cache, lesshst, profile, report, ssh, sudo_as_admin_successful
 
 
-![Корень](screenshots\root-tree.png)
+![Корень](lab\lab1\screenshots\root-tree.png)
 
-![Домашний каталог](screenshots\home-tree.png)
+![Домашний каталог](lab\lab1\screenshots\home-tree.png)
 
 ## №7 Права доступа ##
 
@@ -81,9 +81,9 @@
 Группа:    0 = --- (нет прав)
 Остальные: 0 = --- (нет прав)
 
-![права доступа](screenshots\permissions.png)
+![права доступа](lab\lab1\screenshots\permissions.png)
 
-![Изменения прав доступа](screenshots\chmod.png)
+![Изменения прав доступа](lab\lab1\screenshots\chmod.png)
 
 ## №8 Установленные пакеты и сервисы ##
 
@@ -118,9 +118,9 @@ unattended-upgrades — автообновления безопасности
 user@1000 — пользовательский сеанс
 getty@tty1 — консольный вход
 
-![установленные пакеты](screenshots\packages.png)
+![установленные пакеты](lab\lab1\screenshots\packages.png)
 
-![Запущенные сервисы](screenshots\services.png)
+![Запущенные сервисы](lab\lab1\screenshots\services.png)
 
 ## №9 Конвейер и перенаправления  ##
 
@@ -134,13 +134,13 @@ du (disk usage) — подсчет занимаемого места
 2>/dev/null — перенаправление ошибок (stderr, поток 2) в /dev/null (игнорирование ошибок доступа)
 
 
-![Топ-10 процессов по памяти](screenshots\top-processes.png)
+![Топ-10 процессов по памяти](lab\lab1\screenshots\top-processes.png)
 
-![подсчет количества процессов по пользователям](screenshots\process-count.png)
+![подсчет количества процессов по пользователям](lab\lab1\screenshots\process-count.png)
 
-![Большие файлы в /var](screenshots\big-files.png)
+![Большие файлы в /var](lab\lab1\screenshots\big-files.png)
 
 
 ## №10 итоговый файл ##
 
-![Содержимое файла report](screenshots\report-files.png)
+![Содержимое файла report](lab\lab1\screenshots\report-files.png)
