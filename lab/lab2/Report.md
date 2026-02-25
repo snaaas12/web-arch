@@ -6,7 +6,7 @@
 
 Генерирование SSH ключа
 
-![](screenshots/ssh-github.png)
+![](lab\lab2\screenshots\ssh-github.png)
 
 ## 2 VPS и файрвол
 
