@@ -98,7 +98,10 @@ ai-info.ru.             345600  IN      NS      ns4.netangels.ru.
 snaaas.ai-info.ru.      300     IN      A       130.193.57.144
 
 
+## №11 Report
 
+PR
+![](screenshots/PR.png)
 
 
 
