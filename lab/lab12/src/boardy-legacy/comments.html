@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <title>Boardy — Комментарии</title>
+    <!-- Bootstrap CSS — красивые стили из коробки -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <!-- React — библиотека для построения UI -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+    <!-- Babel — браузер не понимает JSX, Babel транслирует на лету -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+    <style>
+        .user-info { float: right; }
+        .comment { border-bottom: 1px solid #eee; padding: 10px 0; }
+        .comment strong { color: #007bff; }
+        .no-comments { color: #999; text-align: center; padding: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1>Boardy — Комментарии</h1>
+            <div id="user-info" class="user-info">
+                <span class="spinner-border spinner-border-sm" role="status"></span>
+            </div>
+        </div>
+        
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Тестовый пост #1</h5>
+                <p class="card-text">Это тестовый пост для проверки работы JWT и комментариев.</p>
+                <p class="card-text"><small class="text-muted">Автор: Admin</small></p>
+            </div>
+        </div>
+        
+        <!-- React подхватит этот div -->
+        <div id="app"></div>
+    </div>
+    
+    <!-- Подключаем JSX компонент -->
+    <script type="text/babel" src="/js/comments.jsx"></script>
+    
+    <!-- Показываем информацию о пользователе -->
+    <script type="text/javascript">
+        fetch('/api/me.php', { credentials: 'include' })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                const userInfo = document.getElementById('user-info');
+                if (data && data.token) {
+                    // Декодируем JWT чтобы получить имя
+                    const payload = JSON.parse(atob(data.token.split('.')[1]));
+                    userInfo.innerHTML = `
+                        <div class="dropdown">
+                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" data-bs-toggle="dropdown">
+                                👤 ${payload.name}
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="/logout.php">Выйти</a></li>
+                            </ul>
+                        </div>
+                    `;
+                } else {
+                    userInfo.innerHTML = '<a href="/login.php" class="btn btn-primary btn-sm">Войти</a>';
+                }
+            })
+            .catch(() => {
+                document.getElementById('user-info').innerHTML = '<a href="/login.php" class="btn btn-primary btn-sm">Войти</a>';
+            });
+    </script>
+    
+    <!-- Bootstrap JS для dropdown -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
