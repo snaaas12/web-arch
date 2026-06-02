@@ -1,10 +1,4 @@
 node_modules
 .env
-.env.*
 .git
-.gitignore
 storage/logs/*
-storage/framework/cache/*
-storage/framework/sessions/*
-storage/framework/views/*
-*.md
