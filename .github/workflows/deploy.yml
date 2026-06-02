@@ -9,25 +9,30 @@ env:
   IMAGE_PREFIX: ghcr.io/${{ github.repository }}
 
 jobs:
-  # === ПРОВЕРКИ (копия из ci.yml) ===
+  # Повторяем проверки из ci.yml для защиты main
   lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      
       - name: PHP syntax check
         run: |
-          find boardy-laravel -name "*.php" -print0 | \
-          xargs -0 -n1 php -l 2>&1 | grep -v "No syntax errors" || true
+          find src -name "*.php" -print0 | \
+          xargs -0 -n1 php -l
+          
       - name: Python syntax check
-        run: python -m compileall boardy-api/ -q
+        run: |
+          python -m compileall api/ -q
 
   smoke:
     runs-on: ubuntu-latest
     needs: lint
     steps:
       - uses: actions/checkout@v4
+      
       - name: Build images
         run: docker compose build
+        
       - name: Start stack
         run: |
           docker compose up -d
@@ -35,10 +40,12 @@ jobs:
             curl -fs http://localhost/health && break
             sleep 2
           done
+          
       - name: Smoke endpoints
         run: |
           curl -f http://localhost/health
           curl -f http://localhost/api/health
+          
       - name: Tear down
         if: always()
         run: docker compose down -v
@@ -48,27 +55,33 @@ jobs:
     needs: smoke
     steps:
       - uses: actions/checkout@v4
+
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
+          
       - name: Install PHP deps
-        working-directory: ./boardy-laravel
+        working-directory: ./src
         run: composer install --no-interaction --prefer-dist
+        
       - name: Run PHPUnit
-        working-directory: ./boardy-laravel
+        working-directory: ./src
         run: php artisan test
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+          
       - name: Install Python deps
-        run: pip install -r boardy-api/requirements.txt pytest httpx
+        run: pip install -r api/requirements.txt pytest httpx
+        
       - name: Run pytest
-        working-directory: ./boardy-api
-        run: pytest tests/ -v
+        working-directory: ./api
+        run: pytest -v
 
-  # === СБОРКА И ПУШ ОБРАЗОВ ===
+  # Кирпичики 10-11: Сборка образов и push в GHCR
   build:
     runs-on: ubuntu-latest
     needs: test
@@ -78,32 +91,32 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Login to GHCR
+      - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
           
-      - name: Build & push Laravel image
+      - name: Build & push PHP image
         uses: docker/build-push-action@v5
         with:
-          context: ./boardy-laravel
+          context: ./php
           push: true
           tags: |
-            ${{ env.IMAGE_PREFIX }}-laravel:${{ github.sha }}
-            ${{ env.IMAGE_PREFIX }}-laravel:latest
+            ${{ env.IMAGE_PREFIX }}-php:${{ github.sha }}
+            ${{ env.IMAGE_PREFIX }}-php:latest
             
       - name: Build & push FastAPI image
         uses: docker/build-push-action@v5
         with:
-          context: ./boardy-api
+          context: ./fastapi
           push: true
           tags: |
             ${{ env.IMAGE_PREFIX }}-api:${{ github.sha }}
             ${{ env.IMAGE_PREFIX }}-api:latest
 
-  # === ДЕПЛОЙ НА СЕРВЕР ===
+  # Кирпичик 15: Деплой на VPS через SSH
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -115,7 +128,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            cd /var/www/boardy
+            cd /opt/boardy
             echo ${{ secrets.GITHUB_TOKEN }} | \
               docker login ghcr.io -u ${{ github.actor }} --password-stdin
             docker compose pull
