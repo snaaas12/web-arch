@@ -26,30 +26,61 @@ jobs:
     needs: lint
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Create .env file
         run: |
-          cat > .env << 'EOF'
+          cat > .env << 'ENVEOF'
           DB_ROOT_PASSWORD=rootpassword
           DB_DATABASE=boardy
           DB_USERNAME=boardy_user
           DB_PASSWORD=boardy_password
           GITHUB_REPOSITORY=local/boardy
-          EOF
-      
+          ENVEOF
+          sed -i 's/^[[:space:]]*//' .env
+
+      - name: Check nginx config exists
+        run: |
+          ls -la docker/nginx/
+          cat docker/nginx/nginx.conf
+
       - name: Build images
         run: docker compose -f docker-compose.yml -f docker-compose.local.yml build
-        
+
       - name: Start stack
         run: |
           docker compose -f docker-compose.yml -f docker-compose.local.yml up -d
-          sleep 10
-          
-      - name: Check containers status
+          sleep 15
+
+      - name: Check all containers
         run: |
+          echo "=== Container Status ==="
           docker compose -f docker-compose.yml -f docker-compose.local.yml ps
-          docker compose -f docker-compose.yml -f docker-compose.local.yml logs --tail=50
           
+          echo -e "\n=== All Docker Containers ==="
+          docker ps -a
+          
+          echo -e "\n=== Nginx Logs ==="
+          docker compose -f docker-compose.yml -f docker-compose.local.yml logs nginx
+          
+          echo -e "\n=== PHP Logs ==="
+          docker compose -f docker-compose.yml -f docker-compose.local.yml logs php
+          
+          echo -e "\n=== FastAPI Logs ==="
+          docker compose -f docker-compose.yml -f docker-compose.local.yml logs fastapi
+          
+          echo -e "\n=== MySQL Logs ==="
+          docker compose -f docker-compose.yml -f docker-compose.local.yml logs mysql
+
+      - name: Check nginx config inside container
+        run: |
+          docker compose -f docker-compose.yml -f docker-compose.local.yml exec -T nginx nginx -t || true
+          docker compose -f docker-compose.yml -f docker-compose.local.yml exec -T nginx cat /etc/nginx/nginx.conf || true
+
+      - name: Check ports
+        run: |
+          netstat -tlnp || ss -tlnp
+          docker port $(docker compose -f docker-compose.yml -f docker-compose.local.yml ps -q nginx)
+
       - name: Wait for services
         run: |
           for i in {1..30}; do
@@ -60,16 +91,17 @@ jobs:
             echo "Waiting... attempt $i"
             sleep 2
           done
-          
+
       - name: Smoke endpoints
         run: |
           curl -f http://localhost/health
           curl -f http://localhost/api/health
-          
+
       - name: Tear down
         if: always()
         run: docker compose -f docker-compose.yml -f docker-compose.local.yml down -v
-  test:
+
+   test:
     runs-on: ubuntu-latest
     needs: smoke
     steps:

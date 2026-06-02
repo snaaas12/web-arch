@@ -2,9 +2,7 @@ services:
   php:
     build:
       context: ./boardy-laravel
-    image: local/boardy-php:dev
     
   fastapi:
     build:
       context: ./boardy-api
-    image: local/boardy-api:dev
