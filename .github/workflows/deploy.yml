@@ -74,7 +74,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # --- PHP/Laravel ����� ---
+      # --- PHP/Laravel тесты ---
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -95,13 +95,14 @@ jobs:
         working-directory: ./boardy-laravel
         run: ./vendor/bin/phpunit tests/Feature/healthTest.php
 
+      # --- Python/FastAPI тесты ---
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
       - name: Install Python deps
-        run: pip install -r boardy-api/requirements.txt pytest "httpx<0.28"
+        run: pip install -r boardy-api/requirements.txt
 
       - name: Run pytest
         working-directory: ./boardy-api
@@ -120,8 +121,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: snaaas12
+          password: ${{ secrets.GHCR_PAT }}
 
       - name: Build & push PHP image
         uses: docker/build-push-action@v5
