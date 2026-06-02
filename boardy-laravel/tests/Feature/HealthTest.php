@@ -10,7 +10,8 @@ class HealthTest extends TestCase
     {
         $response = $this->get('/health');
 
-        $response->assertStatus(999);
-        $response->assertJson(['ok' => false]);
+        $response->assertStatus(200);
+        $response->assertJson(['ok' => true]);
     }
 }
+
