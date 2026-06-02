@@ -1,0 +1,9 @@
+# Override для локальной разработки: сборка из исходников вместо pull из реестра
+services:
+  laravel:
+    build: ./boardy-laravel
+    image: ""  # пустой image отменяет значение из основного файла
+    
+  fastapi:
+    build: ./boardy-api
+    image: ""

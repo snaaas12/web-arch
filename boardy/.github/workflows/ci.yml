@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main, dev]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: PHP syntax check
+        run: |
+          find boardy-laravel -name "*.php" -print0 | \
+          xargs -0 -n1 php -l 2>&1 | grep -v "No syntax errors" || true
+      
+      - name: Python syntax check
+        run: python -m compileall boardy-api/ -q
+
+  smoke:
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build images
+        run: docker compose build
+        
+      - name: Start stack
+        run: |
+          docker compose up -d
+          for i in {1..30}; do
+            curl -fs http://localhost/health && break
+            sleep 2
+          done
+          
+      - name: Smoke endpoints
+        run: |
+          curl -f http://localhost/health
+          curl -f http://localhost/api/health
+          
+      - name: Tear down
+        if: always()
+        run: docker compose down -v
+
+  test:
+    runs-on: ubuntu-latest
+    needs: smoke
+    steps:
+      - uses: actions/checkout@v4
+
+      # --- PHP/Laravel тесты ---
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          
+      - name: Install PHP deps
+        working-directory: ./boardy-laravel
+        run: composer install --no-interaction --prefer-dist
+        
+      - name: Run PHPUnit
+        working-directory: ./boardy-laravel
+        run: php artisan test
+
+      # --- Python/FastAPI тесты ---
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          
+      - name: Install Python deps
+        run: pip install -r boardy-api/requirements.txt pytest httpx
+        
+      - name: Run pytest
+        working-directory: ./boardy-api
+        run: pytest tests/ -v
