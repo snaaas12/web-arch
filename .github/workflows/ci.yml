@@ -102,7 +102,7 @@ jobs:
           python-version: '3.11'
 
       - name: Install Python deps
-        run: pip install -r boardy-api/requirements.txt pytest httpx
+        run: pip install -r boardy-api/requirements.txt pytest "httpx<0.28"
 
       - name: Run pytest
         working-directory: ./boardy-api
