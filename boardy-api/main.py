@@ -123,6 +123,10 @@ app.include_router(ws.router)
 # STATUS
 # =========================
 
+@app.get('/healt')
+async def healt_test()
+    return {'status': 'ok'}
+
 @app.get('/api/status')
 async def status():
     return {
@@ -133,10 +137,6 @@ async def status():
 # =========================
 # USERS
 # =========================
-
-@app.get("/health")
-def health():
-    return {"ok": True}
 
 
 @app.get('/api/users')
