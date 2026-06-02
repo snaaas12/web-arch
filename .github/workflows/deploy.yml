@@ -93,9 +93,8 @@ jobs:
 
       - name: Run HealthTest only
         working-directory: ./boardy-laravel
-        run: ./vendor/bin/phpunit tests/Feature/HealthTest.php
+        run: ./vendor/bin/phpunit tests/Feature/healthTest.php
 
-      # --- Python/FastAPI тесты ---
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
