@@ -144,33 +144,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-
-      - name: Debug SSH key
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Simulate deploy (no real server access)
         run: |
-          echo "Key length: ${#SSH_PRIVATE_KEY}"
-          echo "First 50 chars: ${SSH_PRIVATE_KEY:0:50}"
-          echo "Last 50 chars: ${SSH_PRIVATE_KEY: -50}"
-
-      - name: Setup SSH key
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        run: |
-          printf "%s\n" "$SSH_PRIVATE_KEY" > /tmp/deploy_key
-          chmod 600 /tmp/deploy_key
-          ls -la /tmp/deploy_key
-          head -1 /tmp/deploy_key
-          tail -1 /tmp/deploy_key
-          ssh-keyscan -H 192.168.72.131 > /tmp/known_hosts
-
-      - name: Deploy over SSH
-        run: |
-          ssh -i /tmp/deploy_key -o UserKnownHostsFile=/tmp/known_hosts snaaas@192.168.72.131 << 'ENDSSH'
-            cd /opt/boardy
-            echo ${{ secrets.GHCR_PAT }} | docker login ghcr.io -u snaaas12 --password-stdin
-            docker compose pull
-            docker compose up -d
-            docker image prune -f
-            docker logout ghcr.io
-          ENDSSH
+          echo "=== Deploy Simulation ==="
+          echo "Build SHA: ${{ github.sha }}"
+          echo "Image: ${{ env.IMAGE_PREFIX }}/boardy-laravel:latest"
+          echo ""
+          echo "In production, these commands would run on VPS:"
+          echo "  docker login ghcr.io -u snaaas12"
+          echo "  docker compose pull"
+          echo "  docker compose up -d"
+          echo "  docker image prune -f"
+          echo ""
+          echo "Deploy simulation complete!"
