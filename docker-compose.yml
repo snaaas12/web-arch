@@ -1,6 +1,6 @@
 services:
   php:
-    image: ghcr.io/${GITHUB_REPOSITORY:-local/boardy}-php:latest
+    image: ghcr.io/snaaas12/boardy-laravel:latest
     volumes:
       - ./boardy-laravel:/var/www/html
     depends_on:
@@ -10,7 +10,7 @@ services:
       - boardy-network
 
   fastapi:
-    image: ghcr.io/${GITHUB_REPOSITORY:-local/boardy}-api:latest
+    image: ghcr.io/snaaas12/boardy-api:latest
     volumes:
       - ./boardy-api:/app
     depends_on:
